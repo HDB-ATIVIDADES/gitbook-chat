@@ -10,7 +10,9 @@ GitBook Chat — chat interface que consulta GitBook e salva respostas como `.md
 - **asks/**: respostas salvas como `YYYY-MM-DD-HH-mm-ss.md`.
 
 ## Key Behaviors
-- `GITBOOK_URL` obrigatória em `.env`
+- **Stateless**: cada interação (WS message, tool call) é independente — não há contexto entre elas
+- `GITBOOK_URL` obrigatória em `.env` — é a fonte RAG fixa; todo `query_gitbook` faz `?ask=` contra essa única URL
+- `welcome.md` é cópia local commitada do README.md do `GITBOOK_URL`, nunca refetchada
 - Welcome.md carregado via `/download/readme.md` antes do WS conectar
 - Respostas: se GitBook já prefixa `# `, salva raw; senão prefixa `# pergunta\n\n`
 - Links viram `.ask-btn` apenas na seção `# Suggested Follow-up Questions:`; header+parágrafo omitidos
@@ -32,3 +34,11 @@ Sem Dockerfile — `docker-compose.yml` usa `image: node:20-alpine`, código mon
 
 ## Tests
 `tests/api.test.js` usando `node:test`. Testa `/api/history`, `/download/readme.md`, página principal.
+
+## MCP Server
+- Integrado no mesmo `server.js` (rota `POST /mcp` via SSE em `http://localhost:8000/mcp`)
+- Transporte SSE padrão: `GET /sse` (endpoint), `POST /mcp?sessionId=xxx` (mensagens)
+- 5 tools: `query_gitbook`, `list_asks`, `get_ask`, `search_asks`, `get_welcome`
+- **Stateless**: cada tool call é independente, sem sessão/conversa entre chamadas
+- A fonte RAG fixa é o `GITBOOK_URL` — `query_gitbook` sempre consulta essa única URL
+- Config opencode: `.opencode/mcp.json` com `type: "sse"` para `http://localhost:8000/sse`
