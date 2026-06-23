@@ -17,7 +17,8 @@ Cada pergunta é independente — não há memória de interações anteriores. 
 
 Inclui um servidor MCP (Model Context Protocol) via SSE, permitindo que ferramentas como opencode consultem o GitBook, listem buscas anteriores e naveguem pelo histórico — tudo no mesmo processo, porta 8000.
 
-> [!WARNING] APLICAÇÃO RODA EM CIMA DE UM BUG/FALHA
+> [!WARNING]
+> APLICAÇÃO RODA EM CIMA DE UM BUG/FALHA
 > A API de IA do GitBook usada como fonte RAG é pública e sem autenticação
 > Só tem um rate limit de 20 requisições a cada 5 minutos.
 > O servidor não acumula fila — requisições excedentes falham.
